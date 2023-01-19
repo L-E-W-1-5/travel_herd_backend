@@ -38,18 +38,31 @@ export async function createTrip(trip) {
         for (let x = 0; x < trip.event[i].itinerary.length; x++){
             let itiChoice = await query(
                 `INSERT INTO voting (itinerary_id, choice, type, date_time, vote_count) VALUES ('${itineraryChoices[i].id}', '${trip.event[i].itinerary[x].name}', '${trip.event[i].itinerary[x].type}', '${trip.event[i].itinerary[x].date_time}', '0' ) RETURNING *;`
-            )
-            console.log(itiChoice.rows)
-                console.log("test 4")
+            )              
                 rowsIti.push(itiChoice.rows[0])
         }
     }
+
+    let tripUsersArr = []
+    for (let i = 0; i < trip.member.length; i++){
+        const tripUsers = await query(
+            `INSERT INTO trip_users (trip_id, user_id, joined, user_name) VALUES ('${groupAndDestinationTable.rows[0].id}', NULL, false, '${trip.member[i].user_name}') RETURNING *;`
+        )
+            // TODO: enter email functionality here with trip.member[i].email
+        tripUsersArr.push(tripUsers.rows)
+    }
+    
+
+//('1', '1', FALSE, 'lewis-blobfish'),
+
+
 
   return {
             group: groupAndDestinationTable.rows,
             dates: dateTable.rows,
             date_choices: dateChoices,
             itinerary: rowsIti,
-            itinerary_choices: itineraryChoices
+            itinerary_choices: itineraryChoices,
+            member: tripUsersArr
         };
 }
