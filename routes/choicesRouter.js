@@ -11,8 +11,19 @@ choicesRouter.post("/", async function (req, res) {
 });
 
 choicesRouter.get("/", async function (req, res) {
+  console.log(req.body.category)
   try {
-    const result = await getChoices();
+    const result = await getChoices(req.body.category, req.body.trip_id);
+    res.status(200).json({ success: true, payload: result });
+  } catch (err) {
+    console.log("err");
+  }
+});
+
+choicesRouter.get("/:id", async function (req, res) {
+  console.log(req.params.id)
+  try {
+    const result = await getAllChoices(req.params.id);
     res.status(200).json({ success: true, payload: result });
   } catch (err) {
     console.log("err");
