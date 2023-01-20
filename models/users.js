@@ -20,11 +20,12 @@ export async function createTrip(trip) {
 
 export async function getUsers(id) {
     let userReturn = await query(
-        `SELECT * FROM users WHERE users.auth_id = ${id}` 
+        `SELECT * FROM users WHERE users.auth_id = '${id}'` 
     )
-    if (!userReturn){
-        let userReturn = await query(
-            `INSERT INTO users (auth_id, name, email) VALUES ('auth001', 'lewis', 'lewis@lewis.com');`  // TODO: finish this query
-        )
-    }
+    // if (!userReturn){
+    //     let userReturn = await query(
+    //         `INSERT INTO users (auth_id, name, email) VALUES ('auth001', 'lewis', 'lewis@lewis.com');`  // TODO: finish this query
+    //     )
+    // }
+    return userReturn.rows
 }

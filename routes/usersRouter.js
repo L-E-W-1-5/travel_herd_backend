@@ -14,13 +14,13 @@ const checkJwt = auth({
   jwksUri: 'https://dev-otxf3y3m35xq561z.uk.auth0.com/.well-known/jwks.json'
 })
 
-
+//
 usersRouter.get("/:id", checkJwt, async function(req, res) {
 
     const result = await getUsers(req.params.id) //TODO: send the body to getUsers
 
     console.log(req.params.id)
-    res.json({success: true, payload: "joy"})
+    res.json({success: true, payload: result})
 })
 
 
