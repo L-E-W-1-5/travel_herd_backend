@@ -18,14 +18,24 @@ export async function createTrip(trip) {
 
 // TODO: create a function that will either get the user and the trips they have joined. or add them to the user database
 
-export async function getUsers(id) {
+export async function getUsers(id, body) {
+
     let userReturn = await query(
         `SELECT * FROM users WHERE users.auth_id = '${id}'` 
     )
-    // if (!userReturn){
-    //     let userReturn = await query(
-    //         `INSERT INTO users (auth_id, name, email) VALUES ('auth001', 'lewis', 'lewis@lewis.com');`  // TODO: finish this query
-    //     )
-    // }
-    return userReturn.rows
+
+    if (userReturn.rows.length === 0){
+        userReturn = await query(
+            `INSERT INTO users (auth_id, name, email) VALUES ('${body.sub}', '${body.name}', '${body.email}') RETURNING *;` 
+        )
+       
+    }
+    let userTrips = await query(
+      `SELECT trip_id FROM trip_users INNER JOIN users ON trip_users.user_id = '${body.sub}';`
+    )
+
+    return {
+      userData: userReturn.rows,
+      userTrips: userTrips.rows
+    }
 }

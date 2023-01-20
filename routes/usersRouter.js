@@ -15,9 +15,9 @@ const checkJwt = auth({
 })
 
 //
-usersRouter.get("/:id", checkJwt, async function(req, res) {
+usersRouter.post("/:id", checkJwt, async function(req, res) {
 
-    const result = await getUsers(req.params.id) //TODO: send the body to getUsers
+    const result = await getUsers(req.params.id, req.body) //TODO: send the body to getUsers
 
     console.log(req.params.id)
     res.json({success: true, payload: result})
