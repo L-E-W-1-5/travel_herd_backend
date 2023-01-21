@@ -1,4 +1,9 @@
 import query from "../database/index.js";
+import nodemailer from 'nodemailer'
+
+const email = 'SOCtravelherd@gmail.com'
+const password = 'zswojfnerfeyktvz'
+
 
 export async function getTrips(user_id) {
   const allTrips = await query(
@@ -9,10 +14,10 @@ export async function getTrips(user_id) {
 
 export async function createTrip(trip) {
 
-    let member_count = trip.member.length    
+    let member_count = trip.member.length + 1  
 
     const groupAndDestinationTable = await query(
-        `INSERT INTO trip (trip_name, destination, admin_id, no_of_users, all_joined, all_voted) VALUES ('${trip.group}', '${trip.destination}', '${trip.admin}', '${member_count}', false, false) RETURNING *`
+        `INSERT INTO trip (trip_name, destination, admin_id, no_of_users, all_joined, all_voted) VALUES ('${trip.group}', '${trip.destination}', '${trip.admin_id}', '${member_count}', false, false) RETURNING *`
     );
     const dateTable = await query(
         `INSERT INTO trip_date (trip_id, chosen) VALUES ('${groupAndDestinationTable.rows[0].id}', NULL) RETURNING *;`
@@ -48,12 +53,41 @@ export async function createTrip(trip) {
         const tripUsers = await query(
             `INSERT INTO trip_users (trip_id, user_id, joined, user_name) VALUES ('${groupAndDestinationTable.rows[0].id}', NULL, false, '${trip.member[i].user_name}') RETURNING *;`
         )
-            // TODO: enter email functionality here with trip.member[i].email
+            
         tripUsersArr.push(tripUsers.rows)
     }
+    const addAdminToTripUsers = await query(
+            `INSERT INTO trip_users (trip_id, user_id, joined, user_name) VALUES ('${groupAndDestinationTable.rows[0].id}','${trip.admin_id}', true, 'admin') RETURNING *;`
+    )
+    tripUsersArr.push(addAdminToTripUsers.rows)
     
+// TODO: enter email functionality here with trip.member[i].email
 
-//('1', '1', FALSE, 'lewis-blobfish'),
+for (let i = 0; i < trip.member.length; i++){
+    var transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: `SOCtravelherd@gmail.com`,
+            pass: `qaaenynrkuisseja`
+        }
+    });
+    console.log(`${groupAndDestinationTable.rows[0].id} : ${trip.member[i].email} : ${trip.member[i].user_name}`)
+
+    const mailOptions = {
+        from: `${email}`,
+        to: `${trip.member[i].email}`,
+        subject: 'you have been invited to join a trip on travel herd',
+        text: `a friend has invited you to join a group trip on travel herd! to join navigate to travelherd.com, log in and go to join trip. 
+        then enter ${trip.member[i].user_name} as your username and ${groupAndDestinationTable.rows[0].id} as the trip id.`
+    }
+    transporter.sendMail(mailOptions, function(error, info){
+        if(error){
+            console.log(error)
+        } else {
+            console.log(`email sent: ${info.response}`)
+        }
+    })
+}
 
 
 
