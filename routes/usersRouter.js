@@ -24,15 +24,15 @@ usersRouter.post("/:id", checkJwt, async function(req, res) {
   }
 
     const result = await getUsers(req.params.id, req.body) //TODO: send the body to getUsers
-
+//console.log(result.fullTripData)
     res.json({success: true, payload: result})
 })
 
 usersRouter.patch("/:id", async function(req, res) {
-  console.log(req.params.id, req.body)
+  //console.log(req.params.id, req.body)
   const result = await addTripToUser(req.params.id, req.body)
 
-  console.log(result)
+  //console.log(result)
 
   res.json({success: true, payload: result})
 })

@@ -48,29 +48,52 @@ for (let i = 0; i < userData.rows.length; i++){
   )
 
   let dateChoicesData = await query(
-    `SELECT trip_date.id, choice, vote_count, dates.id, chosen, trip_id FROM trip_date INNER JOIN dates ON trip_date.id = dates.date_id WHERE trip_date.trip_id = '${userData.rows[i].trip_id}'`
+    `SELECT trip_date.id, choice, vote_count, dates.date_id, dates.id, chosen, trip_id FROM trip_date INNER JOIN dates ON trip_date.id = dates.date_id WHERE trip_date.trip_id = '${userData.rows[i].trip_id}'`
   )
+
+    let voteCount = {
+      count: 0,
+      date_id: 0
+    }
+
+    for (let i = 0; i < dateChoicesData.rows.length; i++){
+      voteCount.count += dateChoicesData.rows[i].vote_count
+      voteCount.date_id = dateChoicesData.rows[i].date_id
+    }
+
+  // if (voteCount.count !== userData.rows[i].no_of_users){
+
+
+
+  //   console.log(voteCount.count, userData.rows[i].no_of_users)
+  //   const updateTripVote = await query(
+  //     `UPDATE trip_date SET chosen =  ` //TODO: set to choice with most votes
+  //   )
+  // }
+
+
   userData.rows[i].date_choices = dateChoicesData.rows
+  userData.rows[i].total_date_votes = voteCount
   userData.rows[i].members = tripMembers.rows
 
   let itinerary_voting = await query(
     `SELECT id, trip_id, choice FROM itinerary_voting WHERE itinerary_voting.trip_id = '${userData.rows[i].trip_id}'`
   )
   //userData.rows[i].itinerary_voting = itinerary
-  console.log(itinerary_voting.rows)
+  //console.log(itinerary_voting.rows)
   itinerary.push(itinerary_voting.rows)
 }
-console.log(itinerary)
+
 let itinerary_choices = []
 for (let i = 0; i < itinerary.length; i++){
   for (let x = 0; x < itinerary[i].length; x++){
-    console.log(itinerary[i][x].id)
+    //console.log(itinerary[i][x].id)
       const itineraryOptions = await query(
         `SELECT voting.id, itinerary_id, itinerary_voting.choice, voting.choice, type, date_time, vote_count FROM voting INNER JOIN itinerary_voting ON voting.itinerary_id = itinerary_voting.id  WHERE itinerary_voting.id = '${itinerary[i][x].id}'`
       )
-      console.log(itineraryOptions.rows)
+      //console.log(itineraryOptions.rows)
       itinerary[i][x].voting = itineraryOptions.rows
-      console.log(itinerary[i][x])
+     // console.log(itinerary[i][x])
   }
   userData.rows[i].itinerary = itinerary[i]
 }

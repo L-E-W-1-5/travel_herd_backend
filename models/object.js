@@ -71,7 +71,7 @@ for (let i = 0; i < trip.member.length; i++){
             pass: `qaaenynrkuisseja`
         }
     });
-    console.log(`${groupAndDestinationTable.rows[0].id} : ${trip.member[i].email} : ${trip.member[i].user_name}`)
+   // console.log(`${groupAndDestinationTable.rows[0].id} : ${trip.member[i].email} : ${trip.member[i].user_name}`)
 
     const mailOptions = {
         from: `${email}`,
