@@ -7,6 +7,7 @@ import choicesRouter from "./routes/choicesRouter.js"
 import pollRouter from "./routes/pollRouter.js"
 import objectRouter from "./routes/objectRouter.js";
 import usersRouter from "./routes/usersRouter.js";
+import votingRouter from "./routes/votingRouter.js";
 
 
 const app = express();
@@ -25,6 +26,7 @@ app.use("/api/choices", choicesRouter);
 
 app.use("/api/object", objectRouter)
 app.use("/api/users", usersRouter)
+app.use("/api/voting", votingRouter)
 
 app.listen(PORT, function () {
   console.log(`server is running in port ${PORT}`);

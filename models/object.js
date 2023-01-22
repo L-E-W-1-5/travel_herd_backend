@@ -61,7 +61,7 @@ export async function createTrip(trip) {
     )
     tripUsersArr.push(addAdminToTripUsers.rows)
     
-// TODO: enter email functionality here with trip.member[i].email
+
 
 for (let i = 0; i < trip.member.length; i++){
     var transporter = nodemailer.createTransport({
@@ -77,8 +77,8 @@ for (let i = 0; i < trip.member.length; i++){
         from: `${email}`,
         to: `${trip.member[i].email}`,
         subject: 'you have been invited to join a trip on travel herd',
-        text: `a friend has invited you to join a group trip on travel herd! to join navigate to travelherd.com, log in and go to join trip. 
-        then enter ${trip.member[i].user_name} as your username and ${groupAndDestinationTable.rows[0].id} as the trip id.`
+        text: `a friend has invited you to join a group trip on travel herd! to join, navigate to travelherd.com, log in and go to join trip. 
+        then enter '${trip.member[i].user_name}' as your username and '${groupAndDestinationTable.rows[0].id}' as the trip id.`
     }
     transporter.sendMail(mailOptions, function(error, info){
         if(error){

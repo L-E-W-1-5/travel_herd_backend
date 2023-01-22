@@ -43,10 +43,15 @@ export async function getUsers(id, body) {
 let itinerary = []
 for (let i = 0; i < userData.rows.length; i++){
   
+  const tripMembers = await query(
+    `SELECT name FROM users INNER JOIN trip_users ON users.auth_id = trip_users.user_id WHERE trip_users.trip_id = '${userData.rows[i].trip_id}'`
+  )
+
   let dateChoicesData = await query(
     `SELECT trip_date.id, choice, vote_count, dates.id, chosen, trip_id FROM trip_date INNER JOIN dates ON trip_date.id = dates.date_id WHERE trip_date.trip_id = '${userData.rows[i].trip_id}'`
   )
   userData.rows[i].date_choices = dateChoicesData.rows
+  userData.rows[i].members = tripMembers.rows
 
   let itinerary_voting = await query(
     `SELECT id, trip_id, choice FROM itinerary_voting WHERE itinerary_voting.trip_id = '${userData.rows[i].trip_id}'`
@@ -71,18 +76,12 @@ for (let i = 0; i < itinerary.length; i++){
 }
 
 
-// itinerary_voting / voting
-    // const itinerary = await query(
-    //   `SELECT id, trip_id, choice FROM itinerary_voting WHERE itinerary_voting.trip_id = '${userData.rows[i].trip_id}'`
-    // )
-   
-     //      
+//userData.rows[i].trip_id 
 
     return {
       userData: userReturn.rows,
 
       fullTripData: userData.rows,
-
     }
 }
 
