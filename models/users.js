@@ -110,12 +110,22 @@ for (let i = 0; i < itinerary.length; i++){
 
 
 export async function addTripToUser(id, body) {
-
+console.log(id)
     const {tripusername, tripid} = body 
+    let update
+    // update = await query(
+    //     `SELECT * FROM trip_users WHERE trip_users.user_id = '${id}'`
+    // )
+    // console.log(update.rows)
 
-    const update = await query(
-        `UPDATE trip_users SET user_id = $1, joined = true, user_name = $2 WHERE trip_id = $3 RETURNING *;`,[id, tripusername, tripid]
-    )
+    // if(update.rows.length < 1){
+
+      update = await query(
+          `UPDATE trip_users SET user_id = $1, joined = true, user_name = $2 WHERE trip_id = $3 AND user_name = '${tripusername}' RETURNING *;`,[id, tripusername, tripid]
+      )
+
+    //}
+
     console.log(update.rows)
     return update.rows
 }
