@@ -113,18 +113,18 @@ export async function addTripToUser(id, body) {
 console.log(id)
     const {tripusername, tripid} = body 
     let update
-    // update = await query(
-    //     `SELECT * FROM trip_users WHERE trip_users.user_id = '${id}'`
-    // )
-    // console.log(update.rows)
+    update = await query(
+        `SELECT * FROM trip_users WHERE trip_users.user_id = '${id}' AND trip_users.trip_id = '${tripid}'`
+    )
+    console.log(update.rows)
 
-    // if(update.rows.length < 1){
+     if(update.rows.length < 1){
 
       update = await query(
           `UPDATE trip_users SET user_id = $1, joined = true, user_name = $2 WHERE trip_id = $3 AND user_name = '${tripusername}' RETURNING *;`,[id, tripusername, tripid]
       )
 
-    //}
+    }
 
     console.log(update.rows)
     return update.rows
