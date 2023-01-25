@@ -57,7 +57,7 @@ export async function castItineraryVote(id, data) {
 console.log(voteTally, voteReply.rows)
         //TODO: finish off the voting functionality for the itinerary - if the number of votes equals the number of members, update the choice in itinerary_voting
 
-        if (voteTally === voteReply.rows[0].no_of_users){
+        if (voteTally === voteReply.rows[0].no_of_users && voteReply.rows[0].choice === null){
 
             let highVote = {
                 number: 0,
