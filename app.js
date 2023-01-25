@@ -17,7 +17,7 @@ app.use(cors());
 app.use(morgan("dev"));
 app.use(express.json());
 
-//TODO: middleware for auth0 here linked to user accounts?
+
 
 app.use("/api/trip", tripRouter);
 app.use("/api/member", memberRouter);

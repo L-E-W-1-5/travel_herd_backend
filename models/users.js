@@ -98,6 +98,22 @@ for (let i = 0; i < itinerary.length; i++){
   userData.rows[i].itinerary = itinerary[i]
 }
 
+//TODO; get the catagories the user has voted on already.. maybe if they're in a seperate part of the return object, we dont need to include them in the queries for further up
+//      and we can just filter the results in the trip details page. if the id matches then we know the user has voted..
+
+const dateVotedAlready = await query(
+  `SELECT voted_user.vote_id, date_id, trip_id FROM dates INNER JOIN trip_date ON dates.date_id = trip_date.id INNER JOIN voted_user ON dates.id = voted_user.vote_id WHERE voted_user.user_id = '${id}'`
+)
+
+const itineraryVotedAlready = await query(
+  `SELECT * FROM voted_user INNER JOIN voting ON vote_id = voting.id INNER JOIN itinerary_voting ON itinerary_voting.id = voting.itinerary_id WHERE voted_user.user_id = '${id}'`
+ // `SELECT voted_user.vote_id, itinerary_id, trip_id, voting.choice FROM voting INNER JOIN itinerary_voting ON itinerary_id = itinerary_voting.id INNER JOIN voted_user ON vote_id = voting.id WHERE voted_user.user_id = '${id}'`
+)
+console.log(itineraryVotedAlready.rows)
+
+
+
+
 
 //userData.rows[i].trip_id 
 
@@ -105,6 +121,10 @@ for (let i = 0; i < itinerary.length; i++){
       userData: userReturn.rows,
 
       fullTripData: userData.rows,
+
+      votesCastByUser: dateVotedAlready.rows,
+
+      itineraryVotesCast: itineraryVotedAlready.rows
     }
 }
 

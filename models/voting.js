@@ -12,7 +12,7 @@ export async function castItineraryVote(id, data) {
     console.log("first", returnVoteCount.rows);
 
     let voteReply = await query(
-        `SELECT vote_count, no_of_users, voting.id, voting.itinerary_id, itinerary_voting.choice, date_time, type FROM voting INNER JOIN itinerary_voting ON voting.itinerary_id = itinerary_voting.id INNER JOIN trip ON itinerary_voting.trip_id = trip.id WHERE voting.itinerary_id = '${data.itinerary_id}'`
+        `SELECT vote_count, no_of_users, voting.id, voting.itinerary_id, itinerary_voting.choice, voting.choice, date_time, type FROM voting INNER JOIN itinerary_voting ON voting.itinerary_id = itinerary_voting.id INNER JOIN trip ON itinerary_voting.trip_id = trip.id WHERE voting.itinerary_id = '${data.itinerary_id}'`
     )
     
     console.log(voteReply.rows)
@@ -40,7 +40,7 @@ export async function castItineraryVote(id, data) {
         )
         console.log(addVote.rows)
         updateItineraryItemVote = await query(
-            `UPDATE voting SET vote_count = '${data.vote_count +1}' WHERE id = ${data.id} RETURNING *;`
+            `UPDATE voting SET vote_count = '${data.vote_count +1}' WHERE id = ${data.id} AND itinerary_id = ${data.itinerary_id} RETURNING *;`
         )
         console.log(updateItineraryItemVote.rows)
     }
@@ -56,6 +56,29 @@ export async function castItineraryVote(id, data) {
     }
 console.log(voteTally, voteReply.rows)
         //TODO: finish off the voting functionality for the itinerary - if the number of votes equals the number of members, update the choice in itinerary_voting
+
+        if (voteTally === voteReply.rows[0].no_of_users){
+
+            let highVote = {
+                number: 0,
+                id: 0,
+                choice: ""
+            }
+
+            for (let i = 0; i < voteReply.rows; i++){
+                if (voteReply.rows[i].vote_count > highVote.number){
+                    highVote.number = voteReply.rows[i].vote_count
+                    highVote.id = voteReply.rows[i].id
+                    highVote.choice = voteReply.rows[i].choice     
+                }
+            }
+
+            const updateTripVote = await query(
+                `UPDATE itinerary_voting SET choice = ${highVote.id} WHERE itinerary_voting.id = ${data.itinerary_id}` //TODO: set to choice with most votes. WHERE to join
+            )
+
+        }
+
 
     // returnVoteCount = await query(
     //     `SELECT itinerary_voting.id, itinerary_voting.trip_id, voting.id, voting.vote_count, voting.choice FROM itinerary_voting INNER JOIN voting ON itinerary_voting.id = voting.itinerary_id INNER JOIN voted_user ON voted_user.vote_id = voting.id 
@@ -139,7 +162,7 @@ export async function castVote(id, data) {
 
         //console.log(voteTally, returnVoteCount.rows[0].no_of_users)
          const updateTripVote = await query(
-           `UPDATE trip_date SET chosen = ${highVote.choice} WHERE trip_date.id = ${returnVoteCount.rows[i].date_id}` //TODO: set to choice with most votes
+           `UPDATE trip_date SET chosen = ${highVote.choice} WHERE trip_date.id = ${data.id}` //TODO: set to choice with most votes
          )
          return updateTripVote
       }
