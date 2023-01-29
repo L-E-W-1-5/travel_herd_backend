@@ -19,9 +19,14 @@ export async function createTrip(trip) {
     const groupAndDestinationTable = await query(
         `INSERT INTO trip (trip_name, destination, admin_id, no_of_users, all_joined, all_voted) VALUES ('${trip.group}', '${trip.destination}', '${trip.admin_id}', '${member_count}', false, false) RETURNING *`
     );
+
+    if (trip.date.length === 1){
+        `INSERT INTO trip_date (trip_id, chosen) VALUES ('${groupAndDestinationTable.rows[0].id}', 'from: ${trip.date[0].from} to: ${trip.date[0].to}') RETURNING *;`
+    }
     const dateTable = await query(
         `INSERT INTO trip_date (trip_id, chosen) VALUES ('${groupAndDestinationTable.rows[0].id}', NULL) RETURNING *;`
     )
+
     let dateChoices = []
    
     for (let i = 0; i < trip.date.length; i++){
@@ -35,9 +40,19 @@ export async function createTrip(trip) {
      let rowsIti = []
 
     for (let i = 0; i < trip.event.length; i++){
-        let itiChoice = await query(
-            `INSERT INTO itinerary_voting (trip_id, choice) VALUES ('${groupAndDestinationTable.rows[0].id}', NULL) RETURNING *;`
+
+        let itiChoice
+
+        if (trip.event[i].itinerary.length === 1){
+            itiChoice = await query(
+                `INSERT INTO itinerary_voting (trip_id, choice) VALUES ('${groupAndDestinationTable.rows[0].id}', 'the ${trip.event[i].itinerary[x].type} ${trip.event[i].itinerary[x].name}, on ${trip.event[i].itinerary[x].date_time}') RETURNING *;`
+            )
+        }
+        else{
+            itiChoice = await query(
+                `INSERT INTO itinerary_voting (trip_id, choice) VALUES ('${groupAndDestinationTable.rows[0].id}', NULL) RETURNING *;`
         )
+        }
         itineraryChoices.push(itiChoice.rows[0])
 
         for (let x = 0; x < trip.event[i].itinerary.length; x++){
