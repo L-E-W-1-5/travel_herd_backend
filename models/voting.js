@@ -68,7 +68,7 @@ console.log(voteTally, voteReply.rows)
             for (let i = 0; i < voteReply.rows; i++){
                 if (voteReply.rows[i].vote_count > highVote.number){
                     highVote.number = voteReply.rows[i].vote_count
-                    highVote.id = voteReply.rows[i].id
+                    highVote.id = voteReply.rows[i].id  //TODO: change the id to a INT in the database
                     highVote.choice = voteReply.rows[i].choice     
                 }
             }

@@ -89,7 +89,7 @@ for (let i = 0; i < itinerary.length; i++){
   for (let x = 0; x < itinerary[i].length; x++){
     //console.log(itinerary[i][x].id)
       const itineraryOptions = await query(
-        `SELECT voting.id, itinerary_id, itinerary_voting.choice, voting.choice, type, date_time, vote_count FROM voting INNER JOIN itinerary_voting ON voting.itinerary_id = itinerary_voting.id  WHERE itinerary_voting.id = '${itinerary[i][x].id}'`
+        `SELECT itinerary_id, itinerary_voting.choice, voting.choice, type, date_time, vote_count FROM voting INNER JOIN itinerary_voting ON voting.itinerary_id = itinerary_voting.id  WHERE itinerary_voting.id = '${itinerary[i][x].id}'`
       )
       //console.log(itineraryOptions.rows)
       itinerary[i][x].voting = itineraryOptions.rows
