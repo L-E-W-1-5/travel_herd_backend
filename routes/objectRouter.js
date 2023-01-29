@@ -16,7 +16,7 @@ import { createTrip, getTrips } from "../models/object.js";
 // });
 
 objectRouter.post("/", async function (req, res) {
-    console.log(req.body)
+   // console.log(req.body)
   const result = await createTrip(req.body);
   res.json({ success: true, payload: result });
 });

@@ -3,19 +3,19 @@ import query from "../database/index.js";
 
 
 export async function castItineraryVote(id, data) {
-    console.log(data.itinerary_id)
+    //console.log(data.itinerary_id)
     //TODO: create the voting for itinerary - find out if a vote has already been cast for this user, save the vote and the user, count the totals, find out if all have voted, if so, send chosen
     let returnVoteCount = await query(  
         `SELECT * FROM voting INNER JOIN voted_user ON voted_user.vote_id = voting.itinerary_id WHERE voted_user.vote_id = '${data.itinerary_id}' AND voted_user.user_id = '${id}'`
     )
 
-    console.log("first", returnVoteCount.rows);
+//    console.log("first", returnVoteCount.rows);
 
     let voteReply = await query(
         `SELECT vote_count, no_of_users, voting.id, voting.itinerary_id, itinerary_voting.choice, voting.choice, date_time, type FROM voting INNER JOIN itinerary_voting ON voting.itinerary_id = itinerary_voting.id INNER JOIN trip ON itinerary_voting.trip_id = trip.id WHERE voting.itinerary_id = '${data.itinerary_id}'`
     )
     
-    console.log(voteReply.rows)
+ //   console.log(voteReply.rows)
 
     let voteTally = 0
 
@@ -42,7 +42,7 @@ export async function castItineraryVote(id, data) {
         updateItineraryItemVote = await query(
             `UPDATE voting SET vote_count = '${data.vote_count +1}' WHERE id = ${data.id} AND itinerary_id = ${data.itinerary_id} RETURNING *;`
         )
-        console.log(updateItineraryItemVote.rows)
+    //    console.log(updateItineraryItemVote.rows)
     }
 
     voteReply = await query(
@@ -54,7 +54,7 @@ export async function castItineraryVote(id, data) {
     for (let i = 0; i < voteReply.rows.length; i++){
         voteTally += voteReply.rows[i].vote_count
     }
-console.log(voteTally, voteReply.rows)
+//console.log(voteTally, voteReply.rows)
         //TODO: finish off the voting functionality for the itinerary - if the number of votes equals the number of members, update the choice in itinerary_voting
 
         if (voteTally === voteReply.rows[0].no_of_users && voteReply.rows[0].choice === null){
@@ -167,8 +167,8 @@ export async function castVote(id, data) {
          return updateTripVote
       }
 
-    console.log("vote count", returnVoteCount.rows)
-    console.log(updateDatesTable.rows)
+   // console.log("vote count", returnVoteCount.rows)
+    //console.log(updateDatesTable.rows)
     return {
         updatedTable: updateDatesTable.rows,
         voteCount: voteTally

@@ -109,7 +109,7 @@ const itineraryVotedAlready = await query(
   `SELECT * FROM voted_user INNER JOIN voting ON vote_id = voting.id INNER JOIN itinerary_voting ON itinerary_voting.id = voting.itinerary_id WHERE voted_user.user_id = '${id}'`
  // `SELECT voted_user.vote_id, itinerary_id, trip_id, voting.choice FROM voting INNER JOIN itinerary_voting ON itinerary_id = itinerary_voting.id INNER JOIN voted_user ON vote_id = voting.id WHERE voted_user.user_id = '${id}'`
 )
-console.log(itineraryVotedAlready.rows)
+//console.log(itineraryVotedAlready.rows)
 
 
 
@@ -130,7 +130,7 @@ console.log(itineraryVotedAlready.rows)
 
 
 export async function addTripToUser(id, body) {
-console.log(id)
+//console.log(id)
     const {tripusername, tripid} = body 
     let update
     update = await query(
@@ -146,7 +146,7 @@ console.log(id)
 
     }
 
-    console.log(update.rows)
+    //console.log(update.rows)
     return update.rows
 }
 
