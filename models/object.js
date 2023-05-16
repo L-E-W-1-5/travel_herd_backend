@@ -45,7 +45,7 @@ export async function createTrip(trip) {
 
         if (trip.event[i].itinerary.length === 1){
             itiChoice = await query(
-                `INSERT INTO itinerary_voting (trip_id, choice) VALUES ('${groupAndDestinationTable.rows[0].id}', 'the ${trip.event[i].itinerary[x].type} ${trip.event[i].itinerary[x].name}, on ${trip.event[i].itinerary[x].date_time}') RETURNING *;`
+                `INSERT INTO itinerary_voting (trip_id, choice) VALUES ('${groupAndDestinationTable.rows[0].id}', 'the ${trip.event[i].itinerary[0].type} ${trip.event[i].itinerary[0].name}, on ${trip.event[i].itinerary[0].date_time}') RETURNING *;`
             )
         }
         else{

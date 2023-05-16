@@ -37,7 +37,10 @@ usersRouter.patch("/:id", async function(req, res) {
   res.json({success: true, payload: result})
 })
 
-
+// usersRouter.get("/", async function(req, res) {
+//   console.log("here?")
+//   res.json({success: true, payload: "result"})
+// })
 
 
 export default usersRouter;
