@@ -18,6 +18,8 @@ const checkJwt = auth({
 //
 usersRouter.post("/:id", checkJwt, async function(req, res) {
 
+  console.log(req.params.id, "user get");
+
   if(req.params.id === "undefined"){
       res.json({success: false, payload: "no user logged in"})
       return
