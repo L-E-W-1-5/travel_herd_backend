@@ -1,4 +1,5 @@
 import query from "../database/index.js";
+import { neonConnection } from "../database/index.js";
 
 export async function getTrips(user_id) {
   const allTrips = await query(
