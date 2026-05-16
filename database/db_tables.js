@@ -19,7 +19,7 @@ export const createAllTables = async () => {
         destination TEXT,
         admin_id INT REFERENCES users(id),
         no_of_users INT,
-        end_joined BOOLEAN DEFAULT FALSE,
+        all_joined BOOLEAN DEFAULT FALSE,
         all_voted BOOLEAN DEFAULT FALSE
       )
     `);
