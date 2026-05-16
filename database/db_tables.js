@@ -1,4 +1,4 @@
-import { neonConnection} fron './index.js';
+import { neonConnection} from './index.js';
 
 
 export const createAllTables () => {
