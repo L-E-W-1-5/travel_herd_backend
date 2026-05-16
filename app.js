@@ -4,7 +4,7 @@ import cors from "cors";
 import objectRouter from "./routes/objectRouter.js";
 import usersRouter from "./routes/usersRouter.js";
 import votingRouter from "./routes/votingRouter.js";
-import { usersCreated } from "./database/db_tables.js";
+import { createAllTables } from "./database/db_tables.js";
 
 
 const app = express();
@@ -14,7 +14,7 @@ app.use(cors());
 app.use(morgan("dev"));
 app.use(express.json());
 
-usersCreated();
+createAllTables();
 
 app.use("/api/object", objectRouter)
 app.use("/api/users", usersRouter)
