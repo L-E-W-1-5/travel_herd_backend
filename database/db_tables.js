@@ -1,7 +1,7 @@
 import { neonConnection} from './index.js';
 
 
-export const createAllTables () => {
+export const createAllTables = () => {
     
 const usersCreated = neonConnection.query(`
 CREATE TABLE users (
