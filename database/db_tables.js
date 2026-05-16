@@ -13,7 +13,7 @@ export const createAllTables = async () => {
     console.log('Users table created:', usersCreated);
 
     const tripsCreated = await neonConnection.query(`
-      CREATE TABLE IF NOT EXISTS trips (
+      CREATE TABLE IF NOT EXISTS trip (
         id SERIAL PRIMARY KEY,
         trip_name TEXT NOT NULL,
         destination TEXT,
@@ -28,7 +28,7 @@ export const createAllTables = async () => {
     const trip_usersCreated = await neonConnection.query(`
       CREATE TABLE IF NOT EXISTS trip_users (
         id SERIAL PRIMARY KEY,
-        trip_id INT NOT NULL REFERENCES trips(id) ON DELETE CASCADE,
+        trip_id INT NOT NULL REFERENCES trip(id) ON DELETE CASCADE,
         user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         joined TIMESTAMP DEFAULT NOW(),
         UNIQUE(trip_id, user_id)
@@ -38,7 +38,7 @@ export const createAllTables = async () => {
     const itinerary_votingCreated = await neonConnection.query(`
       CREATE TABLE IF NOT EXISTS itinerary_voting (
         id SERIAL PRIMARY KEY,
-        trip_id INT NOT NULL REFERENCES trips(id) ON DELETE CASCADE,
+        trip_id INT NOT NULL REFERENCES trip(id) ON DELETE CASCADE,
         choice TEXT NOT NULL
       )
     `);
@@ -66,7 +66,7 @@ export const createAllTables = async () => {
     const trip_datesCreated = await neonConnection.query(`
       CREATE TABLE IF NOT EXISTS trip_dates (
         id SERIAL PRIMARY KEY,
-        trip_id INT NOT NULL REFERENCES trips(id) ON DELETE CASCADE,
+        trip_id INT NOT NULL REFERENCES trip(id) ON DELETE CASCADE,
         choice DATE NOT NULL,
         vote_count INT DEFAULT 0
       )
@@ -75,7 +75,7 @@ export const createAllTables = async () => {
     const trip_date_choicesCreated = await neonConnection.query(`
       CREATE TABLE IF NOT EXISTS dates (
         id SERIAL PRIMARY KEY,
-        trip_id INT NOT NULL REFERENCES trips(id) ON DELETE CASCADE,
+        trip_id INT NOT NULL REFERENCES trip(id) ON DELETE CASCADE,
         chosen DATE
       )
     `);
