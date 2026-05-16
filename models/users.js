@@ -38,7 +38,7 @@ export async function getUsers(id, body) {
     // )
 
     let userData = await neonConnection.query(
-      `SELECT trip_id, trip_name, destination, all_joined, all_voted, no_of_users, admin_id FROM trips INNER JOIN trip_users ON trips.id = trip_users.trip_id WHERE trip_users.user_id = '${body.sub}';`
+      `SELECT trip_id, trip_name, destination, all_joined, all_voted, no_of_users, admin_id FROM trip INNER JOIN trip_users ON trip.id = trip_users.trip_id WHERE trip_users.user_id = '${body.sub}';`
     )
 
 let itinerary = []
