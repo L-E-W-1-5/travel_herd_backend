@@ -50,7 +50,7 @@ export const createAllTables = async () => {
         type TEXT,
         choice TEXT,
         date_time TIMESTAMP DEFAULT NOW(),
-        vote_count INT DEFAULT 1
+        vote_count INT DEFAULT 0
       )
     `);
 
