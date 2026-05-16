@@ -61,7 +61,7 @@ CREATE TABLE voting (
 );
 
 
-const votingCreated = neonConnection.query(`
+const votingUsersCreated = neonConnection.query(`
 CREATE TABLE voted_user(
   id SERIAL PRIMARY KEY,
   vote_id INT NOT NULL REFERENCES itinerary_voting(id) ON DELETE CASCADE,
