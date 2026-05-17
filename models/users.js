@@ -25,7 +25,7 @@ export async function getUsers(id, body) {
         `SELECT * FROM users WHERE users.auth_id = '${id}'` 
     )
 
-    if (!userReturn? || userReturn?.length === 0){
+    if (!userReturn? | userReturn?.length === 0){
         userReturn = await neonConnection.query(
             `INSERT INTO users (auth_id, name, email) VALUES ('${body.sub}', '${body.name}', '${body.email}') RETURNING *;` 
         )  
