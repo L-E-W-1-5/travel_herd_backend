@@ -30,15 +30,16 @@ export async function getUsers(id, body) {
             `INSERT INTO users (auth_id, name, email) VALUES ('${body.sub}', '${body.name}', '${body.email}') RETURNING *;` 
         )  
         return {
-          newUser: userReturn.rows
+          newUser: userReturn[0]
         }
     }
     // let userTrips = await query(
     //   `SELECT trip_id FROM trip_users INNER JOIN users ON trip_users.user_id = users.auth_id WHERE users.auth_id = '${body.sub}';`
     // )
+console.log(userReturn);
 
     let userData = await neonConnection.query(
-      `SELECT trip_id, trip_name, destination, all_joined, all_voted, no_of_users, admin_id FROM trip INNER JOIN trip_users ON trip.id = trip_users.trip_id WHERE trip_users.user_id = '${body.sub}';`
+      `SELECT trip_id, trip_name, destination, all_joined, all_voted, no_of_users, admin_id FROM trip INNER JOIN trip_users ON trip.id = trip_users.trip_id WHERE trip_users.user_id = '${userReturn[0].id}';`
     )
 
 let itinerary = []
