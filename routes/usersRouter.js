@@ -26,7 +26,7 @@ usersRouter.post("/:id", checkJwt, async function(req, res) {
   }
 
     const result = await getUsers(req.params.id, req.body) //TODO: send the body to getUsers
-//console.log(result.fullTripData)
+console.log(result.fullTripData)
     res.json({success: true, payload: result})
 })
 
