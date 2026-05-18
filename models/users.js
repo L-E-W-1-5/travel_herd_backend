@@ -43,14 +43,14 @@ console.log(userReturn);
     )
 
 let itinerary = []
-for (let i = 0; i < userData.rows.length; i++){
+for (let i = 0; i < userData.length; i++){
   
   const tripMembers = await neonConnection.query(
-    `SELECT name FROM users INNER JOIN trip_users ON users.auth_id = trip_users.user_id WHERE trip_users.trip_id = '${userData.rows[i].trip_id}'`
+    `SELECT name FROM users INNER JOIN trip_users ON users.auth_id = trip_users.user_id WHERE trip_users.trip_id = '${userData[i].trip_id}'`
   )
 
   let dateChoicesData = await neonConnection.query(
-    `SELECT trip_date.id, choice, vote_count, dates.date_id, dates.id, chosen, trip_id FROM trip_date INNER JOIN dates ON trip_date.id = dates.date_id WHERE trip_date.trip_id = '${userData.rows[i].trip_id}'`
+    `SELECT trip_date.id, choice, vote_count, dates.date_id, dates.id, chosen, trip_id FROM trip_date INNER JOIN dates ON trip_date.id = dates.date_id WHERE trip_date.trip_id = '${userData[i].trip_id}'`
   )
 
     let voteCount = {
@@ -58,9 +58,9 @@ for (let i = 0; i < userData.rows.length; i++){
       date_id: 0
     }
 
-    for (let i = 0; i < dateChoicesData.rows.length; i++){
-      voteCount.count += dateChoicesData.rows[i].vote_count
-      voteCount.date_id = dateChoicesData.rows[i].date_id
+    for (let i = 0; i < dateChoicesData.length; i++){
+      voteCount.count += dateChoicesData[i].vote_count
+      voteCount.date_id = dateChoicesData[i].date_id
     }
 
   // if (voteCount.count !== userData.rows[i].no_of_users){
@@ -74,16 +74,16 @@ for (let i = 0; i < userData.rows.length; i++){
   // }
 
 
-  userData.rows[i].date_choices = dateChoicesData.rows
-  userData.rows[i].total_date_votes = voteCount
-  userData.rows[i].members = tripMembers.rows
+  userData[i].date_choices = dateChoicesData
+  userData[i].total_date_votes = voteCount
+  userData[i].members = tripMembers
 
   let itinerary_voting = await neonConnection.query(
-    `SELECT id, trip_id, choice FROM itinerary_voting WHERE itinerary_voting.trip_id = '${userData.rows[i].trip_id}'`
+    `SELECT id, trip_id, choice FROM itinerary_voting WHERE itinerary_voting.trip_id = '${userData[i].trip_id}'`
   )
   //userData.rows[i].itinerary_voting = itinerary
   //console.log(itinerary_voting.rows)
-  itinerary.push(itinerary_voting.rows)
+  itinerary.push(itinerary_voting)
 }
 
 let itinerary_choices = []
@@ -94,10 +94,10 @@ for (let i = 0; i < itinerary.length; i++){
         `SELECT itinerary_id, itinerary_voting.choice, voting.choice, type, date_time, vote_count FROM voting INNER JOIN itinerary_voting ON voting.itinerary_id = itinerary_voting.id  WHERE itinerary_voting.id = '${itinerary[i][x].id}'`
       )
       //console.log(itineraryOptions.rows)
-      itinerary[i][x].voting = itineraryOptions.rows
+      itinerary[i][x].voting = itineraryOptions
      // console.log(itinerary[i][x])
   }
-  userData.rows[i].itinerary = itinerary[i]
+  userData[i].itinerary = itinerary[i]
 }
 
 //TODO; get the catagories the user has voted on already.. maybe if they're in a seperate part of the return object, we dont need to include them in the queries for further up
