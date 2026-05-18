@@ -14,7 +14,7 @@ app.use(cors());
 app.use(morgan("dev"));
 app.use(express.json());
 
-//createAllTables();
+createAllTables();
 
 app.use("/api/object", objectRouter)
 app.use("/api/users", usersRouter)
