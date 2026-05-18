@@ -17,7 +17,7 @@ export const createAllTables = async () => {
         id SERIAL PRIMARY KEY,
         trip_name TEXT NOT NULL,
         destination TEXT,
-        admin_id VARCHAR(100) REFERENCES users(id),
+        admin_id INT REFERENCES users(id),
         no_of_users INT,
         all_joined BOOLEAN DEFAULT FALSE,
         all_voted BOOLEAN DEFAULT FALSE
