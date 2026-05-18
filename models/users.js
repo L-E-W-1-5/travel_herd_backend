@@ -50,7 +50,7 @@ for (let i = 0; i < userData.length; i++){
   )
 
   let dateChoicesData = await neonConnection.query(
-    `SELECT trip_dates.id, choice, vote_count, dates.date_id, dates.id, chosen, trip_id FROM trip_dates INNER JOIN dates ON trip_dates.id = dates.date_id WHERE trip_dates.trip_id = '${userData[i].trip_id}'`
+    `SELECT trip_date.id, choice, vote_count, dates.date_id, dates.id, chosen, trip_id FROM trip_date INNER JOIN dates ON trip_date.id = dates.date_id WHERE trip_date.trip_id = '${userData[i].trip_id}'`
   )
 
     let voteCount = {
@@ -104,7 +104,7 @@ for (let i = 0; i < itinerary.length; i++){
 //      and we can just filter the results in the trip details page. if the id matches then we know the user has voted..
 
 const dateVotedAlready = await neonConnection.query(
-  `SELECT voted_user.vote_id, date_id, trip_id FROM dates INNER JOIN trip_dates ON dates.date_id = trip_dates.id INNER JOIN voted_user ON dates.id = voted_user.vote_id WHERE voted_user.user_id = '${id}'`
+  `SELECT voted_user.vote_id, date_id, trip_id FROM dates INNER JOIN trip_date ON dates.date_id = trip_date.id INNER JOIN voted_user ON dates.id = voted_user.vote_id WHERE voted_user.user_id = '${id}'`
 )
 
 const itineraryVotedAlready = await neonConnection.query(
