@@ -108,8 +108,8 @@ const dateVotedAlready = await neonConnection.query(
 )
 
 const itineraryVotedAlready = await neonConnection.query(
-  `SELECT * FROM voted_user INNER JOIN voting ON vote_id = voting.id INNER JOIN itinerary_voting ON itinerary_voting.id = voting.itinerary_id WHERE voted_user.user_id = '${id}'`
- // `SELECT voted_user.vote_id, itinerary_id, trip_id, voting.choice FROM voting INNER JOIN itinerary_voting ON itinerary_id = itinerary_voting.id INNER JOIN voted_user ON vote_id = voting.id WHERE voted_user.user_id = '${id}'`
+  `SELECT * FROM voted_user INNER JOIN voting ON vote_id = voting.id INNER JOIN itinerary_voting ON itinerary_voting.id = voting.itinerary_id WHERE voted_user.user_id = '${userReturn[0].id}'`
+ // `SELECT voted_user.vote_id, itinerary_id, trip_id, voting.choice FROM voting INNER JOIN itinerary_voting ON itinerary_id = itinerary_voting.id INNER JOIN voted_user ON vote_id = voting.id WHERE voted_user.user_id = '${}'`
 )
 //console.log(itineraryVotedAlready.rows)
 
