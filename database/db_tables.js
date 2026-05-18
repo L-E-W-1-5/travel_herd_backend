@@ -63,20 +63,20 @@ export const createAllTables = async () => {
       )
     `);
 
+    const trip_date_choicesCreated = await neonConnection.query(`
+      CREATE TABLE IF NOT EXISTS trip_date (
+        id SERIAL PRIMARY KEY,
+        trip_id INT NOT NULL REFERENCES trip(id) ON DELETE CASCADE,
+        chosen DATE
+      )
+    `);
+    
     const trip_datesCreated = await neonConnection.query(`
       CREATE TABLE IF NOT EXISTS dates (
         id SERIAL PRIMARY KEY,
         date_id INT NOT NULL REFERENCES trip_date(id) ON DELETE CASCADE,
         choice DATE NOT NULL,
         vote_count INT DEFAULT 0
-      )
-    `);
-
-    const trip_date_choicesCreated = await neonConnection.query(`
-      CREATE TABLE IF NOT EXISTS trip_date (
-        id SERIAL PRIMARY KEY,
-        trip_id INT NOT NULL REFERENCES trip(id) ON DELETE CASCADE,
-        chosen DATE
       )
     `);
 
