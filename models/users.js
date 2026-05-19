@@ -48,7 +48,11 @@ for (let i = 0; i < userData.rows.length; i++){
   )
 
   let dateChoicesData = await query(
-    `SELECT trip_date.id, choice, vote_count, dates.date_id, dates.id, chosen, trip_id FROM trip_date INNER JOIN dates ON trip_date.id = dates.date_id WHERE trip_date.trip_id = '${userData.rows[i].trip_id}'`
+    `SELECT trip_date.id, choice, vote_count, dates.date_id, dates.id, chosen, trip_id 
+    FROM trip_date 
+    INNER JOIN dates 
+    ON trip_date.id = dates.date_id 
+    WHERE trip_date.trip_id = '${userData.rows[i].trip_id}'`
   )
 
     let voteCount = {

@@ -1,8 +1,8 @@
 import query from "../database/index.js";
 import nodemailer from 'nodemailer'
 
-const email = 'SOCtravelherd@gmail.com'
-const password = 'zswojfnerfeyktvz'
+const email = process.env.NODEMAILER_EMAIL;
+const password = process.env.NODEMAILER_PASSWORD;
 
 
 export async function getTrips(user_id) {
