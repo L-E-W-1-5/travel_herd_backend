@@ -22,12 +22,17 @@ export async function createTrip(trip) {
 export async function getUsers(id, body) {
 
     let userReturn = await neonConnection.query(
-        `SELECT * FROM users WHERE users.auth_id = '${id}'` 
+        `SELECT * 
+        FROM users 
+        WHERE users.auth_id = '${id}'` 
     )
 
     if (!userReturn || userReturn?.length === 0){
         userReturn = await neonConnection.query(
-            `INSERT INTO users (auth_id, name, email) VALUES ('${body.sub}', '${body.name}', '${body.email}') RETURNING *;` 
+            `INSERT INTO users (auth_id, name, email) 
+            VALUES ('${body.sub}', '${body.name}', '${body.email}') 
+            RETURNING *;
+            ` 
         )  
         return {
           newUser: userReturn[0]
@@ -38,28 +43,32 @@ export async function getUsers(id, body) {
     // )
 console.log(userReturn);
 
-    let userData = await neonConnection.query(
-      `SELECT trip_id, trip_name, destination, all_joined, all_voted, no_of_users, admin_id FROM trip INNER JOIN trip_users ON trip.id = trip_users.trip_id WHERE trip_users.user_id = '${userReturn[0].id}';`
+    let userData = await neonConnection.query(`
+      SELECT trip_id, trip_name, destination, all_joined, all_voted, no_of_users, admin_id 
+      FROM trip 
+      INNER JOIN trip_users 
+      ON trip.id = trip_users.trip_id 
+      WHERE trip_users.user_id = '${userReturn[0].id}';
+      `
     )
 
 let itinerary = []
 for (let i = 0; i < userData.length; i++){
   
-  const tripMembers = await neonConnection.query(
-    `SELECT name FROM users INNER JOIN trip_users ON users.auth_id = trip_users.user_id WHERE trip_users.trip_id = '${userData[i].trip_id}'`
+  const tripMembers = await neonConnection.query(`
+    SELECT name 
+    FROM users 
+    INNER JOIN trip_users 
+    ON users.auth_id = trip_users.user_id 
+    WHERE trip_users.trip_id = '${userData[i].trip_id}'`
   )
 
-<<<<<<< HEAD
-  let dateChoicesData = await query(
-    `SELECT trip_date.id, choice, vote_count, dates.date_id, dates.id, chosen, trip_id 
+  let dateChoicesData = await neonConnection.query(`
+    SELECT trip_date.id, choice, vote_count, dates.date_id, dates.id, chosen, trip_id 
     FROM trip_date 
-    INNER JOIN dates 
-    ON trip_date.id = dates.date_id 
-    WHERE trip_date.trip_id = '${userData.rows[i].trip_id}'`
-=======
-  let dateChoicesData = await neonConnection.query(
-    `SELECT trip_date.id, choice, vote_count, dates.date_id, dates.id, chosen, trip_id FROM trip_date INNER JOIN dates ON trip_date.id = dates.date_id WHERE trip_date.trip_id = '${userData[i].trip_id}'`
->>>>>>> dd6d43514d05449481202fc94eac75bb92aea01f
+    INNER JOIN dates ON trip_date.id = dates.date_id 
+    WHERE trip_date.trip_id = '${userData[i].trip_id}'
+    `
   )
 
     let voteCount = {
@@ -88,7 +97,9 @@ for (let i = 0; i < userData.length; i++){
   userData[i].members = tripMembers
 
   let itinerary_voting = await neonConnection.query(
-    `SELECT id, trip_id, choice FROM itinerary_voting WHERE itinerary_voting.trip_id = '${userData[i].trip_id}'`
+    `SELECT id, trip_id, choice 
+    FROM itinerary_voting 
+    WHERE itinerary_voting.trip_id = '${userData[i].trip_id}'`
   )
   //userData.rows[i].itinerary_voting = itinerary
   //console.log(itinerary_voting.rows)
@@ -99,8 +110,13 @@ let itinerary_choices = []
 for (let i = 0; i < itinerary.length; i++){
   for (let x = 0; x < itinerary[i].length; x++){
     //console.log(itinerary[i][x].id)
-      const itineraryOptions = await neonConnection.query(
-        `SELECT itinerary_id, itinerary_voting.choice, voting.choice, type, date_time, vote_count FROM voting INNER JOIN itinerary_voting ON voting.itinerary_id = itinerary_voting.id  WHERE itinerary_voting.id = '${itinerary[i][x].id}'`
+      const itineraryOptions = await neonConnection.query(`
+        SELECT itinerary_id, itinerary_voting.choice, voting.choice, type, date_time, vote_count 
+        FROM voting 
+        INNER JOIN itinerary_voting 
+        ON voting.itinerary_id = itinerary_voting.id  
+        WHERE itinerary_voting.id = '${itinerary[i][x].id}'
+        `
       )
       //console.log(itineraryOptions.rows)
       itinerary[i][x].voting = itineraryOptions
@@ -112,12 +128,26 @@ for (let i = 0; i < itinerary.length; i++){
 //TODO; get the catagories the user has voted on already.. maybe if they're in a seperate part of the return object, we dont need to include them in the queries for further up
 //      and we can just filter the results in the trip details page. if the id matches then we know the user has voted..
 
-const dateVotedAlready = await neonConnection.query(
-  `SELECT voted_user.vote_id, date_id, trip_id FROM dates INNER JOIN trip_date ON dates.date_id = trip_date.id INNER JOIN voted_user ON dates.id = voted_user.vote_id WHERE voted_user.user_id = '${userReturn[0].id}'`
+const dateVotedAlready = await neonConnection.query(`
+  SELECT voted_user.vote_id, date_id, trip_id 
+  FROM dates 
+  INNER JOIN trip_date 
+  ON dates.date_id = trip_date.id 
+  INNER JOIN voted_user 
+  ON dates.id = voted_user.vote_id 
+  WHERE voted_user.user_id = '${userReturn[0].id}'
+  `
 )
 
-const itineraryVotedAlready = await neonConnection.query(
-  `SELECT * FROM voted_user INNER JOIN voting ON vote_id = voting.id INNER JOIN itinerary_voting ON itinerary_voting.id = voting.itinerary_id WHERE voted_user.user_id = '${userReturn[0].id}'`
+const itineraryVotedAlready = await neonConnection.query(`
+  SELECT * 
+  FROM voted_user 
+  INNER JOIN voting 
+  ON vote_id = voting.id 
+  INNER JOIN itinerary_voting 
+  ON itinerary_voting.id = voting.itinerary_id 
+  WHERE voted_user.user_id = '${userReturn[0].id}'
+  `
  // `SELECT voted_user.vote_id, itinerary_id, trip_id, voting.choice FROM voting INNER JOIN itinerary_voting ON itinerary_id = itinerary_voting.id INNER JOIN voted_user ON vote_id = voting.id WHERE voted_user.user_id = '${}'`
 )
 //console.log(itineraryVotedAlready.rows)
@@ -129,13 +159,13 @@ const itineraryVotedAlready = await neonConnection.query(
 //userData.rows[i].trip_id 
 
     return {
-      userData: userReturn.rows,
+      userData: userReturn,
 
-      fullTripData: userData.rows,
+      fullTripData: userData,
 
-      votesCastByUser: dateVotedAlready.rows,
+      votesCastByUser: dateVotedAlready,
 
-      itineraryVotesCast: itineraryVotedAlready.rows
+      itineraryVotesCast: itineraryVotedAlready
     }
 }
 

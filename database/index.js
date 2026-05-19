@@ -20,7 +20,7 @@ export default function query(text, params) {
   }
 
 
-
+/*
 export const createTripTable = () => {
 
   try{
@@ -75,3 +75,5 @@ export const createTripTable = () => {
         console.log("operation 'CT' complete");
     }
 }
+
+*/
