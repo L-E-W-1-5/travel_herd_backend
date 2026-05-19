@@ -30,7 +30,7 @@ export const createAllTables = async () => {
         id SERIAL PRIMARY KEY,
         trip_id INT NOT NULL REFERENCES trip(id) ON DELETE CASCADE,
         user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-        joined TIMESTAMP DEFAULT NOW(),
+        joined BOOLEAN DEFAULT FALSE,
         UNIQUE(trip_id, user_id)
       )
     `);

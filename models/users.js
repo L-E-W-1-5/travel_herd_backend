@@ -59,7 +59,7 @@ for (let i = 0; i < userData.length; i++){
     SELECT name 
     FROM users 
     INNER JOIN trip_users 
-    ON users.auth_id = trip_users.user_id 
+    ON users.id = trip_users.user_id 
     WHERE trip_users.trip_id = '${userData[i].trip_id}'`
   )
 
@@ -111,7 +111,7 @@ for (let i = 0; i < itinerary.length; i++){
   for (let x = 0; x < itinerary[i].length; x++){
     //console.log(itinerary[i][x].id)
       const itineraryOptions = await neonConnection.query(`
-        SELECT itinerary_id, itinerary_voting.choice, voting.choice, type, date_time, vote_count 
+        SELECT voting.id, itinerary_id, itinerary_voting.choice, voting.choice, type, date_time, vote_count 
         FROM voting 
         INNER JOIN itinerary_voting 
         ON voting.itinerary_id = itinerary_voting.id  
