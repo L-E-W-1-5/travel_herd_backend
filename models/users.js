@@ -102,14 +102,14 @@ for (let i = 0; i < userData.length; i++){
     WHERE itinerary_voting.trip_id = '${userData[i].trip_id}'`
   )
   //userData.rows[i].itinerary_voting = itinerary
-  //console.log(itinerary_voting.rows)
+  console.log(itinerary_voting)
   itinerary.push(itinerary_voting)
 }
 
 let itinerary_choices = []
 for (let i = 0; i < itinerary.length; i++){
   for (let x = 0; x < itinerary[i].length; x++){
-    //console.log(itinerary[i][x].id)
+    console.log(itinerary[i][x].id)
       const itineraryOptions = await neonConnection.query(`
         SELECT voting.id, itinerary_id, itinerary_voting.choice, voting.choice, type, date_time, vote_count 
         FROM voting 
@@ -120,7 +120,7 @@ for (let i = 0; i < itinerary.length; i++){
       )
       //console.log(itineraryOptions.rows)
       itinerary[i][x].voting = itineraryOptions
-     // console.log(itinerary[i][x])
+      console.log(itinerary[i][x])
   }
   userData[i].itinerary = itinerary[i]
 }

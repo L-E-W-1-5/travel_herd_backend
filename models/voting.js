@@ -4,38 +4,66 @@ import { neonConnection } from "../database/index.js";
 
 
 export async function castItineraryVote(id, data) {
-    console.log(id, data)
+    //console.log(id, data)
     //TODO: create the voting for itinerary - find out if a vote has already been cast for this user, save the vote and the user, count the totals, find out if all have voted, if so, send chosen
     let returnVoteCount = await neonConnection.query(  
-        `SELECT * 
+        `SELECT *  
         FROM voting 
         INNER JOIN voted_user 
-        ON voted_user.vote_id = voting.itinerary_id 
+        ON voted_user.vote_id = voting.id 
         WHERE voted_user.vote_id = '${data.itinerary_id}' 
         AND voted_user.user_id = '${id}'
         AND voted_user.type_of_vote = 'itinerary'`
     )
 
-//    console.log("first", returnVoteCount.rows);
-
-    let voteReply = await neonConnection.query(
-        `SELECT vote_count, no_of_users, voting.id, voting.itinerary_id, itinerary_voting.choice, voting.choice, date_time, type 
-        FROM voting 
-        INNER JOIN itinerary_voting 
-        ON voting.itinerary_id = itinerary_voting.id 
-        INNER JOIN trip 
-        ON itinerary_voting.trip_id = trip.id 
-        WHERE voting.itinerary_id = '${data.itinerary_id}'`
+    let voteReply = await neonConnection.query(  
+        `SELECT vote_count, no_of_users, voting.choice, voting.id, voting.itinerary_id, itinerary_voting.choice, voting.type
+        FROM voting
+        INNER JOIN voted_user
+        ON voted_user.vote_id = voting.id 
+        INNER JOIN itinerary_voting
+        ON voting.itinerary_id = itinerary_voting.id
+        INNER JOIN trip t
+        ON itinerary_voting.trip_id = t.id
+        WHERE itinerary_voting.id = '${data.itinerary_id}' 
+        AND voted_user.type_of_vote = 'itinerary'`
     )
+
+    let hasVoted = await neonConnection.query(
+        `
+        SELECT * 
+        FROM voted_user 
+        INNER JOIN voting
+        ON voted_user.vote_id = voting.id
+        WHERE voting.itinerary_id = '${data.itinerary_id}'
+        
+        AND user_id = '${id}'
+        AND type_of_vote = 'itinerary'
+        `
+    )
+
+    //console.log("first", voteReply);
+
+    // let voteReply = await neonConnection.query(
+    //     `SELECT vote_count, no_of_users, voting.id, voting.itinerary_id, itinerary_voting.choice, voting.choice, date_time, type 
+    //     FROM voting 
+    //     INNER JOIN itinerary_voting 
+    //     ON voting.itinerary_id = itinerary_voting.id 
+    //     INNER JOIN trip 
+    //     ON itinerary_voting.trip_id = trip.id 
+    //     WHERE voting.itinerary_id = '${data.itinerary_id}'`
+    // )
     
- //   console.log(voteReply.rows)
+ console.log("voted?", hasVoted)
 
     let voteTally = 0
 
-    if (returnVoteCount.length >= 1){  
+    if (hasVoted.length > 0){  
 
-        for (let i = 0; i < returnVoteCount.length; i++){
-            voteTally += returnVoteCount[i].vote_count
+         //console.log(hasVoted.length)
+
+        for (let i = 0; i < voteReply.length; i++){
+            voteTally += voteReply[i].vote_count
         }
 
         return {
@@ -47,9 +75,11 @@ export async function castItineraryVote(id, data) {
 
    let updateItineraryItemVote;
 
-    if (returnVoteCount.length < 1){
+    if (hasVoted.length < 1){
         const addVote = await neonConnection.query(
-            `INSERT INTO voted_user (vote_id, user_id, type_of_vote) VALUES ('${data.id}', '${id}', 'itinerary') RETURNING *;`
+            `INSERT INTO voted_user (vote_id, user_id, type_of_vote) 
+            VALUES ('${data.id}', '${id}', 'itinerary') 
+            RETURNING *;`
         )
         console.log("42", data.itinerary_id, data.id)
 
@@ -98,7 +128,9 @@ export async function castItineraryVote(id, data) {
             }
 
             const updateTripVote = await neonConnection.query(
-                `UPDATE itinerary_voting SET choice = ${highVote.id} WHERE itinerary_voting.id = ${data.itinerary_id}` //TODO: set to choice with most votes. WHERE to join
+                `UPDATE itinerary_voting 
+                SET choice = ${highVote.id} 
+                WHERE itinerary_voting.id = ${data.itinerary_id}` //TODO: set to choice with most votes. WHERE to join
             )
 
         }
@@ -142,7 +174,7 @@ export async function castVote(id, data) {
         AND voted_user.type_of_vote = 'date'`
     )
 
-    if (voteReply.rows.length >= 1){
+    if (voteReply.length >= 1){
         // returnVoteCount = await query(
         //     `SELECT vote_count FROM dates INNER JOIN trip_date ON trip_date.id = dates.date_id WHERE trip_date.trip_id = '${data.trip_id}'`
         // )
@@ -155,25 +187,38 @@ export async function castVote(id, data) {
         return {
                 message: "you have already voted",
                 voteCount: voteTally,
-                numberOfUsers: returnVoteCount.rows[0].no_of_users
+                numberOfUsers: returnVoteCount[0].no_of_users
             }
     }
 
     let updateDatesTable;
 
-    if (voteReply.rows.length < 1){
+    if (voteReply.length < 1){
         const insertVotedUser = await neonConnection.query(
-        `INSERT INTO voted_user (vote_id, user_id, type_of_vote) VALUES ('${data.id}', '${id}', 'date') RETURNING *;`
+        `INSERT INTO voted_user (vote_id, user_id, type_of_vote) 
+        VALUES ('${data.id}', '${id}', 'date') 
+        RETURNING *;`
         )
-        console.log(insertVotedUser.rows)
+
+        console.log(insertVotedUser)
+
         updateDatesTable = await neonConnection.query(
-        `UPDATE dates SET vote_count = '${data.vote_count +1}' WHERE id = ${data.id} RETURNING *;`
+        `UPDATE dates 
+        SET vote_count = '${data.vote_count +1}' 
+        WHERE id = ${data.id} 
+        RETURNING *;`
         )
         //console.log(updateDatesTable.rows)
     }
 
     returnVoteCount = await neonConnection.query(
-        `SELECT vote_count, no_of_users, choice FROM dates INNER JOIN trip_date ON trip_date.id = dates.date_id INNER JOIN trip ON trip_date.trip_id = trip.id WHERE trip_date.trip_id = '${data.trip_id}'`
+        `SELECT vote_count, no_of_users, choice 
+        FROM dates 
+        INNER JOIN trip_date 
+        ON trip_date.id = dates.date_id 
+        INNER JOIN trip 
+        ON trip_date.trip_id = trip.id 
+        WHERE trip_date.trip_id = '${data.trip_id}'`
     )
 
     let voteTally = 0
@@ -200,7 +245,9 @@ export async function castVote(id, data) {
 
         //console.log(voteTally, returnVoteCount.rows[0].no_of_users)
          const updateTripVote = await neonConnection.query(
-           `UPDATE trip_date SET chosen = ${highVote.choice} WHERE trip_date.id = ${data.id}` //TODO: set to choice with most votes
+           `UPDATE trip_date 
+           SET chosen = ${highVote.choice} 
+           WHERE trip_date.id = ${data.id}` //TODO: set to choice with most votes
          )
          return updateTripVote
       }
